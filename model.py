@@ -15,27 +15,33 @@ class word2vec(nn.Module):
         self.l2 = nn.Linear(32, vocabulary_size)
         self.softmax = nn.LogSoftmax(dim=1)#(dim=1) #its not Softmax
         self.dropout = nn.Dropout(p= 0.1)
+        self.first_input = True
         
+    def log(self, *arg):
+        if self.first_input:
+            print(arg)
+
     def forward(self, input):
 
-        # print('\n', 'input.shape: ', input.shape)
+        self.log('\n', 'input.shape: ', input.shape)
         
         embeddings = self.embeddings(input)
         # Input: LongTensor (N, W), N = mini-batch, W = number of indices to extract per mini-batch
         # Output: (N, W, embedding_dim)
-        # print('embeddings.shape: ', embeddings.shape)
+        self.log('embeddings.shape: ', embeddings.shape)
         # exit()
         embeddings = embeddings.squeeze()
-        # print('embeddings.shape: ', embeddings.shape) #(70, 5)
+        self.log('embeddings.shape: ', embeddings.shape) #(70, 5)
         
         # exit()
         out1 = self.dropout(self.l1(F.relu(embeddings)))                                     #ReLU here too ???
-        # print('out1.shape: ', out1.shape) #(70, 15)
+        self.log('out1.shape: ', out1.shape) #(70, 15)
         out2 = self.dropout(self.l2(F.relu(out1)))
-        # print('out2.shape: ', out2.shape)
+        self.log('out2.shape: ', out2.shape)
         log_probs = self.softmax(out2)
-        # print('log_probs.shape: ', log_probs.shape) #(70, 15)
+        self.log('log_probs.shape: ', log_probs.shape) #(70, 15)
         # exit()
+        self.first_input = False
         return log_probs
     
     def predict(self, test_input):

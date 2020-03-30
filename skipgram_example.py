@@ -41,14 +41,14 @@ for epoch in tqdm(range(NUM_EPOCHS)):
 
     # '''
     training_data = np.array(training_data)
-    #print(type(training_data), training_data.shape)
+    print(type(training_data), training_data.shape)
     # print(training_data.shape)
     num_batches = training_data.shape[0]/batch_size
     # print('num_batches: ', num_batches, '\n')
     # print(100/22)
 
 
-    for batch in (range(num_batches + 1)):
+    for batch in (range(int(num_batches) + 1)):
 
         if batch < num_batches:
 
@@ -69,7 +69,7 @@ for epoch in tqdm(range(NUM_EPOCHS)):
     
         optimizer.zero_grad()
         log_probs = model(x_batch)
-        # print('log_probs.shape: ', log_probs.shape)
+        #print('log_probs.shape: ', log_probs.shape)
 
         loss = loss_function(log_probs, target)
 
