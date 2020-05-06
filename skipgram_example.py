@@ -15,7 +15,7 @@ from utils_modified import load_data
 
 CONTEXT_SIZE = 5
 EMBEDDING_DIM = 30
-NUM_EPOCHS = 15 #CHANGE
+NUM_EPOCHS = 15  # CHANGE
 
 filename = "medium_text.txt"
 # filename = 'tsts.txt'
@@ -29,7 +29,7 @@ loss_function = nn.NLLLoss()
 # model = SkipGram(len(vocab), EMBEDDING_DIM)
 model = word2vec(len(word_to_ix), EMBEDDING_DIM)
 # optimizer = optim.SGD(model.parameters(), lr=0.001)
-optimizer = optim.SGD(model.parameters(), lr = 0.008, momentum=0.9)
+optimizer = optim.SGD(model.parameters(), lr=0.008, momentum=0.9)
 # print(model, '\n')
 # print(optimizer, '\n')
 # exit()
@@ -43,38 +43,37 @@ for epoch in tqdm(range(NUM_EPOCHS)):
     training_data = np.array(training_data)
     print(type(training_data), training_data.shape)
     # print(training_data.shape)
-    num_batches = training_data.shape[0]/batch_size
+    num_batches = training_data.shape[0] / batch_size
     # print('num_batches: ', num_batches, '\n')
     # print(100/22)
-
 
     for batch in (range(int(num_batches) + 1)):
 
         if batch < num_batches:
 
             # print(batch, batch*batch_size, batch*batch_size + batch_size)
-            x_batch = training_data[batch*batch_size: batch*batch_size + batch_size , 0]
+            x_batch = training_data[batch * batch_size: batch * batch_size + batch_size, 0]
             x_batch = torch.tensor(x_batch).view(-1, 1)
             # print(x_batch.shape)
             # print(batch*batch_size + batch_size, x_batch.shape)
-            target = torch.tensor(training_data[batch*batch_size: batch*batch_size + batch_size , 0])
+            target = torch.tensor(training_data[batch * batch_size: batch * batch_size + batch_size, 0])
             # print(target.shape)        
         else:
             # print(batch, batch*batch_size, training_data.shape[0])
-            x_batch = training_data[batch*batch_size: training_data.shape[0] , 0]
+            x_batch = training_data[batch * batch_size: training_data.shape[0], 0]
             x_batch = torch.tensor(x_batch).view(-1, 1)
             # print(x_batch.shape)
-            target = torch.tensor(training_data[batch*batch_size: batch*batch_size + batch_size , 0])   
+            target = torch.tensor(training_data[batch * batch_size: batch * batch_size + batch_size, 0])
             # print(target.shape)
-    
+
         optimizer.zero_grad()
         log_probs = model(x_batch)
-        #print('log_probs.shape: ', log_probs.shape)
+        # print('log_probs.shape: ', log_probs.shape)
 
         loss = loss_function(log_probs, target)
 
         loss.backward()
-        optimizer.step()    
+        optimizer.step()
         # pdb.set_trace()
 
         losses.append(loss)
@@ -90,8 +89,8 @@ print('EMBEDDINGS.shape: ', EMBEDDINGS.shape)
 from sklearn.manifold import TSNE
 
 print('\n', 'running TSNE...')
-tsne = TSNE(n_components = 2).fit_transform(EMBEDDINGS)
-print('tsne.shape: ', tsne.shape) #(15, 2)
+tsne = TSNE(n_components=2).fit_transform(EMBEDDINGS)
+print('tsne.shape: ', tsne.shape)  # (15, 2)
 
 ############ VISUALIZING ############
 x, y = [], []
@@ -100,23 +99,22 @@ for idx, coord in enumerate(tsne):
     # print(coord)
     annotations.append(ix_to_word[idx])
     x.append(coord[0])
-    y.append(coord[1])   
+    y.append(coord[1])
 
 # test_words = ['king', 'queen', 'berlin', 'capital', 'germany', 'palace', 'stays']
 test_words = ['sun', 'moon', 'earth', 'while', 'open', 'run', 'distance', 'energy', 'coal', 'exploit']
 
-plt.figure(figsize = (5, 5))
+plt.figure(figsize=(5, 5))
 for i in range(len(test_words)):
     word = test_words[i]
-    #print('word: ', word)
+    # print('word: ', word)
     vocab_idx = word_to_ix[word]
     # print('vocab_idx: ', vocab_idx)
     plt.scatter(x[vocab_idx], y[vocab_idx])
-    plt.annotate(word, xy = (x[vocab_idx], y[vocab_idx]), \
-        ha='right',va='bottom')
+    plt.annotate(word, xy=(x[vocab_idx], y[vocab_idx]), \
+                 ha='right', va='bottom')
 
 plt.savefig("w2v.png")
 plt.show()
 
 exit()
-
